@@ -5,20 +5,47 @@
   "main": "index.js",
   "scripts": {
     "start": "node dist/index.js",
-    "dev": "nodemon src/index.ts",
-    "build": "tsc"
+    "dev": "nodemon --watch src --exec ts-node src/index.ts",
+    "build": "tsc",
+    "run": "pnpm run build && pnpm run start",
+    "clean": "rimraf dist",
+    "lint": "eslint ./src/**/*.{ts,tsx}",
+    "format": "prettier --write ./src/**/*.{ts,tsx,json,md}",
+    "prettier:check": "prettier --check ./src/**/*.{ts,tsx,json,md}",
+    "prepare": "husky install",
+    "lint:eslint:fix": "eslint . --fix",
+    "lint:prettier:fix": "prettier --write ./src/**/*.{ts,tsx,json,md}",
+    "validate": "pnpm run lint && pnpm run prettier:check",
+    "postinstall": "pnpm prisma generate",
+    "db:migrate": "pnpm drizzle-kit migrate",
+    "db:generate": "pnpm drizzle-kit generate",
+    "db:push": "pnpm drizzle-kit push",
+    "db:studio": "pnpm drizzle-kit studio",
+    "lint:fix": "pnpm run lint:eslint:fix && pnpm run lint:prettier:fix"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.4.7",
-    "express": "^4.21.2"
+    "drizzle-orm": "^0.38.4",
+    "express": "^4.21.2",
+    "pg": "^8.13.1"
   },
   "devDependencies": {
+    "@eslint/js": "^9.19.0",
     "@types/express": "^5.0.0",
+    "@types/node": "^22.10.10",
+    "@types/pg": "^8.11.11",
+    "drizzle-kit": "^0.30.2",
+    "eslint": "^9.19.0",
+    "globals": "^15.14.0",
+    "husky": "^9.1.7",
     "nodemon": "^3.1.9",
+    "prettier": "3.4.2",
     "ts-node": "^10.9.2",
-    "typescript": "^5.7.3"
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.21.0"
   }
 }

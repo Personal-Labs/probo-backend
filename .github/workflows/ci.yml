@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the code from the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18 
+
+      # Step 3: Install pnpm
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      # Step 4: Install dependencies
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Step 5: Lint the code
+      - name: Run Lint
+        run: pnpm run lint
+
+      # Step 6: Check Formatting
+      - name: Check Formatting
+        run: pnpm run prettier:check
+
+      # Step 7: Build the project
+      - name: Build Project
+        run: pnpm run build
+
+    #   # Step 8: Run database migration
+    #   - name: Run Database Migration
+    #     run: pnpm run db:migrate
+
+    #   # Step 9: Validate code (lint and format check combined)
+    #   - name: Validate Code
+    #     run: pnpm run validate
