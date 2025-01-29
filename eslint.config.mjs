@@ -6,7 +6,13 @@ import typescriptParser from "@typescript-eslint/parser";
 
 export default [
   {
-    ignores: ["node_modules", "dist", "drizzle.config.ts"],
+    ignores: [
+      "node_modules",
+      "dist",
+      "drizzle.config.ts",
+      "drizzle/schema.ts",
+      "drizzle/relations.ts",
+    ],
   },
   {
     files: ["**/*.ts"],

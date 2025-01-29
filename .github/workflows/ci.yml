@@ -39,13 +39,11 @@ jobs:
       - name: Check Formatting
         run: pnpm run prettier:check
 
+
       # Step 7: Build the project
       - name: Build Project
         run: pnpm run build
 
-    #   # Step 8: Run database migration
-    #   - name: Run Database Migration
-    #     run: pnpm run db:migrate
 
     #   # Step 9: Validate code (lint and format check combined)
     #   - name: Validate Code

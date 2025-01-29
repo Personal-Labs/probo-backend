@@ -26,6 +26,9 @@ export const users = pgTable("users", {
   email: varchar("email", { length: 255 }).notNull().unique(),
   balance: integer("balance").default(0),
   role: userRoleEnum("role").notNull(),
+  isVerified: boolean("is_verified").default(false).notNull(),
+  password: varchar("password"),
+  OauthId: varchar("OauthId"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
