@@ -21,14 +21,15 @@
     "db:generate": "pnpm drizzle-kit generate",
     "db:push": "pnpm drizzle-kit push",
     "db:studio": "pnpm drizzle-kit studio",
-    "lint:fix": "pnpm run lint:eslint:fix && pnpm run lint:prettier:fix"
+    "lint:fix": "pnpm run lint:eslint:fix && pnpm run lint:prettier:fix",
+    "test" : "vitest",
+    "test:integration": "./scripts/run-integration.sh"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "dotenv": "^16.4.7",
     "drizzle-orm": "^0.38.4",
     "express": "^4.21.2",
     "pg": "^8.13.1",
@@ -38,10 +39,13 @@
     "@eslint/js": "^9.19.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/express": "^5.0.0",
+    "@types/jest": "^29.5.14",
     "@types/node": "^22.10.10",
     "@types/pg": "^8.11.11",
+    "@types/supertest": "^6.0.2",
     "@typescript-eslint/eslint-plugin": "^8.21.0",
     "@typescript-eslint/parser": "^8.21.0",
+    "dotenv": "^16.4.7",
     "drizzle-kit": "^0.30.2",
     "eslint": "^9.19.0",
     "eslint-config-prettier": "^10.0.1",
@@ -52,9 +56,11 @@
     "husky": "^9.1.7",
     "nodemon": "^3.1.9",
     "prettier": "3.4.2",
+    "supertest": "^7.0.0",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3",
-    "typescript-eslint": "^8.21.0"
+    "typescript-eslint": "^8.21.0",
+    "vitest": "^3.0.4"
   }
 }
