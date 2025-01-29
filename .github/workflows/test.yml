@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: Integration Tests
 
 on:
   push:
@@ -9,24 +9,34 @@ on:
       - main
 
 jobs:
-  test:
+  integration-test:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        
+    - name: Install pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: 8
 
-    - name: Set up Docker Compose
-      uses: docker/setup-qemu-action@v2
+    - name: Install Docker Compose
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y docker-compose-plugin
+        docker compose version
 
-    - name: Ensure Docker Compose is available
-      run: docker-compose version
+    - name: Copy environment file
+      run: cp .env.example .env
 
-    - name: Copy .env.example to .env
-      run: cp /.env.example /.env
+    - name: Install dependencies
+      run: pnpm install
 
-    - name: Run integration script
-      run:  pnpm run test:integration
+    - name: Run integration tests
+      run: pnpm run test:integration

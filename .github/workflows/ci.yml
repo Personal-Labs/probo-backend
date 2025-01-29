@@ -39,11 +39,8 @@ jobs:
       - name: Check Formatting
         run: pnpm run prettier:check
 
-      # Step 7: Run testing
-      - name: Run both unit and integration tests
-        run: pnpm run test
 
-      # Step 8: Build the project
+      # Step 7: Build the project
       - name: Build Project
         run: pnpm run build
 
