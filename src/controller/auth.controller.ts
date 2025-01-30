@@ -5,21 +5,23 @@ import { db } from "../db";
 import { AuthSchema, AuthSchemaType } from "../utils/validators/auth.validator";
 import { eq } from "drizzle-orm";
 import bcryptjs from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 const SALTS = parseInt(process.env.SALT_ROUNDS || "10", 10);
+const JWT_SECRET = process.env.JWT_SECRET as string;
+
+if (!JWT_SECRET) {
+  throw new Error("JWT_SECRET is not defined in environment variables");
+}
 
 export const RegisterUser = async (
-  req: Request<object, any, AuthSchemaType>,
+  req: Request<object, object, AuthSchemaType>,
   res: Response,
   // next: NextFunction,
 ): Promise<void> => {
   try {
-    console.log("RegisterUser controller triggered");
-
-    // Validate user input
     const isValidData = AuthSchema.safeParse(req.body);
     if (!isValidData.success) {
-      console.error("Validation failed:", isValidData.error.format());
       res.status(400).json({
         error: "Invalid input data",
       });
@@ -27,8 +29,6 @@ export const RegisterUser = async (
     }
 
     await db.transaction(async (txn) => {
-      console.log("Checking if user already exists:", req.body.email);
-
       const existingUser = await txn
         .select()
         .from(users)
@@ -36,20 +36,17 @@ export const RegisterUser = async (
         .limit(1);
 
       if (existingUser.length > 0) {
-        console.warn("User already exists:", req.body.email);
         res.status(400).json({
           error: "User already exists",
         });
         return;
       }
 
-      console.log("Hashing password...");
       const hashedPassword = await bcryptjs.hash(
         isValidData.data.password,
         SALTS,
       );
 
-      console.log("Inserting new user...");
       const insertedUsers = await txn
         .insert(users)
         .values({
@@ -60,8 +57,6 @@ export const RegisterUser = async (
         .returning();
 
       const user = insertedUsers[0];
-
-      console.log("User created successfully:", user.email);
 
       res.status(201).json({
         message: "User created successfully",
@@ -78,5 +73,61 @@ export const RegisterUser = async (
       error: "Something went wrong",
     });
     return;
+  }
+};
+
+export const UserLogin = async (
+  req: Request<object, object, AuthSchemaType>,
+  res: Response,
+): Promise<void> => {
+  try {
+    const isValidData = AuthSchema.safeParse(req.body);
+    if (!isValidData) {
+      res.status(400).json({
+        error: "Invalid input data",
+      });
+      return;
+    }
+
+    const user = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, req.body.email))
+      .limit(1);
+
+    if (user.length === 0 || !user[0].password) {
+      res.status(401).json({ error: "Invalid email or password" });
+      return;
+    }
+
+    const isPasswordValid = await bcryptjs.compare(
+      req.body.password,
+      user[0].password,
+    );
+
+    if (!isPasswordValid) {
+      res.status(401).json({
+        error: "Invalid password",
+      });
+      return;
+    }
+
+    const token = jwt.sign(
+      { id: user[0].id, email: user[0].email, role: user[0].role },
+      JWT_SECRET,
+      {
+        expiresIn: "10h",
+      },
+    );
+
+    res.status(200).json({
+      message: "User logged in successfully",
+      token: token,
+    });
+  } catch (error) {
+    console.error("Error logging in user:", error);
+    res.status(500).json({
+      error: "Something went wrong",
+    });
   }
 };
