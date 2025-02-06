@@ -19,6 +19,7 @@ export const payoutStatusEnum = pgEnum("payout_status", [
   "PLACED",
   "COMPLETED",
 ]);
+export const eventsAnswerEnum = pgEnum("events_answer", ["YES", "NO"]);
 
 // Users Table
 export const users = pgTable("users", {
@@ -54,9 +55,10 @@ export const events = pgTable("events", {
   endDate: timestamp("end_date").notNull(),
   expiresAt: timestamp("expires_at").notNull(),
   minBet: real("min_bet").notNull(),
+  answer: eventsAnswerEnum("answer"),
   maxBet: real("max_bet").notNull(),
   quantity: integer("quantity").notNull(),
-  sot: text("sot").notNull(),
+  sot: text("sot"),
   traders: integer("traders").default(0).notNull(),
   status: eventStatusEnum("status").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
